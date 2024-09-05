@@ -1,0 +1,31 @@
+{
+  "name": "js-framework-benchmark--j-templates",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "js-framework-benchmark": {
+    "frameworkVersionFromPackage": "j-templates-source",
+    "customURL": "/dist"
+  },
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite watch",
+    "serve": "vite serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TypesInCode/jTemplates.git"
+  },
+  "author": "Jay Landrum",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TypesInCode/jTemplates/issues"
+  },
+  "homepage": "https://github.com/TypesInCode/jTemplates#readme",
+  "devDependencies": {
+    "j-templates": "^6.0.18",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.3"
+  }
+}
