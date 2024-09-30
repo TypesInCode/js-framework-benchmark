@@ -1,4 +1,4 @@
-import { Component, NodeRefTypes } from "j-templates";
+import { Component, NodeRefTypes, calc } from "j-templates";
 import { a, button, div, h1, input, span, table, tbody, td, tr } from "j-templates/DOM";
 import { Scope, State, Value } from "j-templates/Utils";
 import { buildData } from "./buildData";
@@ -183,9 +183,10 @@ class App extends Component {
   private Swap() {
     const data = this.rows;
     if (data.length > 998) {
-      let temp = data[1];
-      data[1] = data[998];
-      data[998] = temp;
+      const temp1 = { ...data[1] };
+      const temp2 = { ...data[998] };
+      Object.assign(data[1], temp2);
+      Object.assign(data[998], temp1);
     }
   }
 
