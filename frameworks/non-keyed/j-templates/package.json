@@ -28,6 +28,6 @@
     "vite": "^5.4.3"
   },
   "dependencies": {
-    "j-templates": "^6.0.25"
+    "j-templates": "^6.0.27"
   }
 }

@@ -1,6 +1,6 @@
 import { Component, NodeRefTypes } from "j-templates";
-import { a, button, div, h1, span, table, tbody, td, tr } from "j-templates/DOM";
-import { State, Value } from "j-templates/Utils";
+import { a, button, div, h1, input, span, table, tbody, td, tr } from "j-templates/DOM";
+import { Scope, State, Value } from "j-templates/Utils";
 import { buildData } from "./buildData";
 
 interface ButtonEvents {
@@ -10,6 +10,7 @@ interface ButtonEvents {
   UpdateEvery10: void;
   Swap: void;
   Clear: void;
+  Sort: void;
 }
 
 class Buttons extends Component<void, void, ButtonEvents> {
@@ -58,6 +59,13 @@ class Buttons extends Component<void, void, ButtonEvents> {
           },
           () => "Swap rows"
         ),
+        button(
+          {
+            props: { className: "btn btn-primary btn-block", type: "button", id: "swaprows" },
+            on: { click: () => this.Fire("Sort") }
+          },
+          () => "Sort"
+        ),
       ]),
     ];
   }
@@ -74,6 +82,34 @@ class App extends Component {
   @Value()
   selectedId?: number;
 
+  @Value()
+  sort = false;
+
+  @Value()
+  filter = "";
+
+  @Scope()
+  get sortedRows() {
+    let rows = this.rows;
+    const sort = this.sort;
+    if (sort) {
+      rows = rows.slice().sort((a, b) => a.label < b.label ? -1 : (a.label === b.label ? 0 : 1));
+    }
+
+    return rows;
+  }
+
+  @Scope()
+  get visibleRows() {
+    let rows = this.sortedRows;
+
+    const filter = this.filter;
+    if (filter)
+      rows = rows.filter(row => row.label.includes(filter));
+
+    return rows;
+  }
+
   Template(): NodeRefTypes | NodeRefTypes[] {
     return [
       div({ props: { className: "jumbotron" } }, () =>
@@ -88,10 +124,14 @@ class App extends Component {
                 Append1000: () => this.Append(1000),
                 UpdateEvery10: () => this.UpdateEvery(10),
                 Clear: () => this.Create(0),
-                Swap: () => this.Swap()
+                Swap: () => this.Swap(),
+                Sort: () => this.ToggleSort()
               },
             })
           ),
+          div({ props: { className: "col-md-6" } }, () =>
+            input({ props: () => ({ value: this.filter }), on: { keyup: (event: any) => this.filter = event.target.value } })
+          )
         ])
       ),
       table(
@@ -99,8 +139,8 @@ class App extends Component {
           props: { className: "table table-hover table-striped test-data" },
         },
         () =>
-          tbody({ data: () => this.rows }, (row) =>
-            tr({ props: () => ({ className: this.selectedId === row.id ? "danger" : "" }) }, () => [
+          tbody({ data: () => this.visibleRows }, (row) =>
+            tr({ props: () => this.selectedId === row.id && { className: "danger" } }, () => [
               td({ props: { className: "col-md-1" } }, () => `${row.id}`),
               td({ props: { className: "col-md-4" } }, () =>
                 a({ on: { click: () => this.Select(row.id) } }, () => row.label)
@@ -113,7 +153,7 @@ class App extends Component {
               td({ props: { className: "col-md-6" } })
             ])
           )
-      ),
+      )
     ];
   }
 
@@ -147,6 +187,10 @@ class App extends Component {
       data[1] = data[998];
       data[998] = temp;
     }
+  }
+
+  private ToggleSort() {
+    this.sort = !this.sort;
   }
 }
 
